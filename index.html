@@ -4,89 +4,83 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>인기팀 뭐먹지? 🍽️</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-/* 기존 CSS 스타일 유지 */
+/* --- 디자인 스타일 --- */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#0f0f1a;--bg2:#161628;--bg3:#1e1e35;--bg4:#252540;
   --acc:#ff6b6b;--acc2:#ffd93d;--acc3:#6bcb77;--acc4:#4d96ff;
   --text:#f0f0f8;--text2:#9090b0;--text3:#505070;
   --border:rgba(255,255,255,0.07);
-  --r:16px;--rs:10px;--rxs:6px;
+  --r:16px;--rs:10px;
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;overflow-x:hidden}
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{flex:1;padding:12px 4px 10px;background:none;border:none;color:var(--text3);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav-btn{flex:1;padding:12px 4px 10px;background:none;border:none;color:var(--text3);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
 .nav-btn.active{color:var(--acc)}
-.page{display:none;padding:0 16px 100px;max-width:480px;margin:0 auto}
+.page{display:none;padding:0 16px 120px;max-width:480px;margin:0 auto}
 .page.active{display:block}
-.page-header{padding:48px 0 20px;text-align:center}
+.page-header{padding:40px 0 20px;text-align:center}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
-.session-card{background:linear-gradient(135deg,var(--bg3),var(--bg4));border:1px solid rgba(255,107,107,0.2);border-radius:var(--r);padding:20px;margin-bottom:16px;position:relative}
-.btn{padding:10px 18px;border-radius:var(--rs);border:none;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.session-card{background:linear-gradient(135deg,var(--bg3),var(--bg4));border:1px solid rgba(255,107,107,0.2);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.btn{padding:12px;border-radius:var(--rs);border:none;font-size:14px;font-weight:500;cursor:pointer;transition:0.2s}
 .btn-primary{background:var(--acc);color:white}
 .btn-success{background:var(--acc3);color:#0f1a10}
 .btn-blue{background:var(--acc4);color:white}
-.btn-full{width:100%;padding:14px;font-size:15px}
+.btn-full{width:100%;display:block;margin-top:8px}
 .vote-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;cursor:pointer}
 .vote-bar-wrap{margin-top:10px;height:4px;background:var(--bg4);border-radius:2px}
 .vote-bar{height:4px;border-radius:2px;background:var(--acc);transition:width 0.5s ease}
-.inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 14px;color:var(--text);margin-bottom:10px}
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg4);padding:10px 20px;border-radius:30px;transition:0.3s;z-index:100;opacity:0}
+.inp{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:12px;color:var(--text);margin-bottom:10px;outline:none}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg4);padding:10px 20px;border-radius:30px;transition:0.3s;z-index:100;opacity:0}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.member-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:25px;background:var(--bg3);margin:4px;cursor:pointer;border:1px solid var(--border);transition:0.2s;font-size:13px}
+.member-chip.active{background:var(--acc);border-color:var(--acc);box-shadow:0 4px 12px rgba(255,107,107,0.3)}
 </style>
 </head>
 <body>
 
 <nav class="nav">
-  <button class="nav-btn active" onclick="showPage('vote')">🗳️투표</button>
-  <button class="nav-btn" onclick="showPage('menu')">🍱메뉴</button>
-  <button class="nav-btn" onclick="showPage('restaurant')">🏠식당</button>
-  <button class="nav-btn" onclick="showPage('team')">👥팀원</button>
+  <button class="nav-btn active" onclick="showPage('vote')">🗳️<span>투표</span></button>
+  <button class="nav-btn" onclick="showPage('menu')">🍱<span>메뉴</span></button>
+  <button class="nav-btn" onclick="showPage('restaurant')">🏠<span>식당</span></button>
+  <button class="nav-btn" onclick="showPage('team')">👥<span>팀원</span></button>
 </nav>
 
 <div class="page active" id="page-vote">
-  <div class="page-header">
-    <h1>인기팀 뭐먹지? 🍽️</h1>
-    <p id="voteSubtitle">오늘의 메뉴를 정해보세요</p>
-  </div>
-
+  <div class="page-header"><h1>인기팀 뭐먹지? 🍽️</h1></div>
   <div class="session-card">
-    <div id="sessionType" style="font-size:11px;color:var(--acc2);margin-bottom:5px">READY</div>
-    <div class="session-title" id="sessionTitle" style="font-size:22px;font-weight:700">진행 중인 투표 없음</div>
-    <div class="session-status" id="sessionStatus" style="font-size:13px;color:var(--text2);margin-top:5px">식당 투표를 먼저 시작해주세요</div>
+    <div id="sessionType" style="font-size:11px;color:var(--acc2)">READY</div>
+    <div id="sessionTitle" style="font-size:20px;font-weight:700;margin:5px 0">진행 중인 투표 없음</div>
+    <div id="sessionStatus" style="font-size:13px;color:var(--text2)">투표를 시작하여 메뉴를 정해보세요</div>
   </div>
-
-  <div class="card" id="nameCard">
-    <div style="font-size:12px;color:var(--text2);margin-bottom:8px">내 이름 선택</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap" id="memberPicker"></div>
+  <div class="card">
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px">내 캐릭터 선택</div>
+    <div id="memberPicker" style="display:flex;flex-wrap:wrap;justify-content:center"></div>
   </div>
-
   <div id="voteList"></div>
-
   <div class="card" style="margin-top:20px">
     <input class="inp" id="sessionTitleInput" value="오늘 점심" placeholder="투표 제목">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <button class="btn btn-success" onclick="window.startRestVote()">🏠 식당투표 시작</button>
-      <button class="btn btn-blue" onclick="window.startMenuVoteFromWinner()">🍱 메뉴투표 전환</button>
+      <button class="btn btn-success" onclick="startRestVote()">🏠 식당투표 시작</button>
+      <button class="btn btn-blue" onclick="startMenuVoteFromWinner()">🍱 메뉴투표 전환</button>
     </div>
-    <button class="btn btn-secondary btn-full" style="margin-top:8px;background:var(--bg3);color:var(--text2)" onclick="window.endSession()">■ 투표 종료</button>
+    <button class="btn btn-full" style="background:var(--bg3);color:var(--text2)" onclick="endSession()">■ 투표 종료</button>
   </div>
 </div>
 
-<div class="page" id="page-menu">... (생략) ...</div>
-<div class="page" id="page-restaurant">... (생략) ...</div>
-<div class="page" id="page-team">... (생략) ...</div>
+<div class="page" id="page-menu"><div class="page-header"><h1>메뉴 관리 🍱</h1></div><div id="fullMenuList"></div></div>
+<div class="page" id="page-restaurant"><div class="page-header"><h1>식당 관리 🏠</h1></div><div id="fullRestList"></div></div>
+<div class="page" id="page-team"><div class="page-header"><h1>팀원 관리 👥</h1></div><div id="fullMemberList"></div></div>
 
 <div class="toast" id="toast"></div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getDatabase, ref, set, get, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+import { getDatabase, ref, set, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
 const firebaseConfig = {
-  // 사용자의 Firebase 설정 정보 유지
   apiKey: "AIzaSyAzsKX2cDvdgTE3CXi8fiv3iQS-djAd1eo",
   authDomain: "inkiteam-lunch.firebaseapp.com",
   databaseURL: "https://inkiteam-lunch-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -105,132 +99,149 @@ let allRestaurants = {};
 let allRestMenus = {};
 let allVotes = {};
 
-// 데이터 실시간 동기화
 onValue(ref(db, 'members'), s => { allMembers = s.val() || {}; renderMemberPicker(); });
 onValue(ref(db, 'restaurants'), s => { allRestaurants = s.val() || {}; });
-onValue(ref(db, 'restMenus'), s => { allRestMenus = s.val() || {}; });
+onValue(ref(db, 'restMenus'), s => { allRestMenus = s.val() || {}; renderVoteList(); });
 onValue(ref(db, 'session'), s => { currentSession = s.val(); updateSessionUI(); renderVoteList(); });
 onValue(ref(db, 'votes'), s => { allVotes = s.val() || {}; renderVoteList(); });
 
-// 세션 UI 업데이트
-function updateSessionUI() {
-  const s = currentSession;
-  document.getElementById('sessionType').textContent = s ? (s.type === 'restaurant' ? 'STEP 1: 식당 투표' : 'STEP 2: 메뉴 투표') : 'READY';
-  document.getElementById('sessionTitle').textContent = s ? s.title : '진행 중인 투표 없음';
-  document.getElementById('sessionStatus').textContent = s ? (s.type === 'restaurant' ? '가고 싶은 식당을 골라주세요' : '메뉴를 골라주세요') : '관리자가 투표를 시작해야 합니다';
+async function initApp() {
+  const members = { 
+    m1:{name:'남', emoji:'👩‍💼'}, m2:{name:'정', emoji:'👦'}, m3:{name:'고', emoji:'👩‍🦱'}, 
+    m4:{name:'완', emoji:'🧐'}, m5:{name:'슬', emoji:'🤓'}, m6:{name:'류', emoji:'👩‍🦳'}, 
+    m7:{name:'빈', emoji:'🧐'}, m8:{name:'전', emoji:'👩'}, m9:{name:'태', emoji:'👧'}
+  };
+  await set(ref(db, 'members'), members);
+
+  const restaurants = {
+    r1:{name:'유키돈까스',emoji:'🍱'}, r2:{name:'바지락생칼국수',emoji:'🍜'}, r3:{name:'본강남면옥',emoji:'🍖'},
+    r4:{name:'개항춘',emoji:'🥘'}, r5:{name:'금봉텐동',emoji:'🍤'}, r6:{name:'권일산시도삭면',emoji:'🍜'},
+    r7:{name:'동남집',emoji:'🥣'}, r8:{name:'선비칼국수',emoji:'🍜'}, r9:{name:'삼만시순두부집',emoji:'🥣'},
+    r10:{name:'명인콩국수',emoji:'🫘'}, r11:{name:'함춘원',emoji:'🥡'}, r12:{name:'준카이센동',emoji:'🍣'},
+    r13:{name:'모바면가',emoji:'🍜'}, r14:{name:'구월애막국수',emoji:'🍜'}, r15:{name:'황제삼계탕',emoji:'🍲'},
+    r16:{name:'박가네남원추어탕',emoji:'🐟'}, r17:{name:'수제비국보리밥집',emoji:'🥣'}, r18:{name:'9월의 초밥',emoji:'🍣'},
+    r19:{name:'코즈요리',emoji:'🍽️'}
+  };
+  await set(ref(db, 'restaurants'), restaurants);
+
+  const menus = {
+    r1: { m1:{name:'돈까스 기본',price:'10000'}, m2:{name:'돈까스 라지',price:'18000'}, m3:{name:'카레돈까스(매운맛)',price:'14000'}, m4:{name:'카레라이스(매운맛)',price:'9000'} },
+    r2: { m1:{name:'바지락생칼국수',price:'10000'}, m2:{name:'서리태콩국수',price:'10000'} },
+    r3: { m1:{name:'코다리냉면',price:'11000'}, m2:{name:'물냉면',price:'10000'}, m3:{name:'비빔냉면',price:'10000'}, m4:{name:'갈비탕',price:'13000'}, m5:{name:'나주곰탕',price:'10000'} },
+    r4: { m1:{name:'기본짬뽕',price:'10000'}, m2:{name:'간짜장',price:'10000'}, m3:{name:'갑오징어삼선짬뽕',price:'14000'}, m4:{name:'잠봉루꼴라짬뽕',price:'14000'}, m5:{name:'항저우동파닭정식',price:'12000'}, m6:{name:'인천식삼선짬뽕',price:'12000'} },
+    r5: { m1:{name:'금봉텐동',price:'11000'}, m2:{name:'고오텐우동',price:'11000'}, m3:{name:'더덕텐동',price:'15000'}, m4:{name:'고보텐소바',price:'12000'}, m5:{name:'자루우동',price:'10000'}, m6:{name:'자루소바',price:'10000'}, m7:{name:'냉모밀',price:'9000'}, m8:{name:'규동',price:'11000'} },
+    r6: { m1:{name:'도삭면',price:'9000'}, m2:{name:'충유면',price:'9000'}, m3:{name:'짜장도삭면',price:'8000'}, m4:{name:'야채볶음면',price:'9000'}, m5:{name:'비빔면',price:'9000'}, m6:{name:'동파육덮밥',price:'11000'}, m7:{name:'어향육슬덮밥',price:'9000'}, m8:{name:'어향가지덮밥',price:'9000'}, m9:{name:'계란볶음밥',price:'8000'} },
+    r7: { m1:{name:'맑은나주곰탕(양지)',price:'11000'}, m2:{name:'양곱탕',price:'15000'}, m3:{name:'왕갈비탕',price:'17000'}, m4:{name:'얼큰양지곰탕',price:'12000'} },
+    r8: { m1:{name:'멸치칼국수',price:'9500'}, m2:{name:'바지락칼국수',price:'11000'}, m3:{name:'들깨칼국수',price:'11000'}, m4:{name:'장칼국수',price:'11000'}, m5:{name:'사골칼국수',price:'12500'}, m6:{name:'김치칼국수',price:'11000'}, m7:{name:'매생이칼국수',price:'11000'}, m8:{name:'비빔칼국수',price:'11000'}, m9:{name:'육개장칼국수',price:'14000'} },
+    r9: { m1:{name:'콩국수',price:'12600'}, m2:{name:'맑은순두부',price:'12100'}, m3:{name:'매운순두부',price:'12100'}, m4:{name:'청국장',price:'12100'} },
+    r10:{ m1:{name:'콩국수',price:'14000'}, m2:{name:'팥칼국수',price:'11000'}, m3:{name:'콩국수 곱빼기',price:'16000'}, m4:{name:'새알팥죽',price:'12000'} },
+    r11:{ m1:{name:'자장면',price:'7000'}, m2:{name:'간짜장',price:'8000'}, m3:{name:'짬뽕',price:'8000'}, m4:{name:'사천식삼선자장면',price:'12000'}, m5:{name:'고추짬뽕',price:'9000'}, m6:{name:'우동',price:'8500'}, m7:{name:'볶음밥',price:'8000'} },
+    r12:{ m1:{name:'연어동',price:'16000'}, m2:{name:'연어참치동',price:'16000'}, m3:{name:'모듬카이센동',price:'17000'}, m4:{name:'시그니처카이센동',price:'19000'}, m5:{name:'연어초밥(10pcs)',price:'16000'}, m6:{name:'연어반반초밥(10pcs)',price:'17000'}, m7:{name:'모듬초밥(10pcs)',price:'17000'}, m8:{name:'시그니처초밥(10pcs)',price:'19000'}, m9:{name:'유부우동',price:'8000'}, m10:{name:'김치우동',price:'8000'}, m11:{name:'모밀소바',price:'8000'}, m12:{name:'돈까스(등심)',price:'11000'} },
+    r13:{ m1:{name:'돈코츠라멘',price:'10500'}, m2:{name:'소바(판모밀)',price:'10500'}, m3:{name:'부타동',price:'9900'}, m4:{name:'카라이라멘',price:'10500'}, m5:{name:'쇼유라멘',price:'10500'}, m6:{name:'소바(냉모밀)',price:'9900'}, m7:{name:'눈꽃가라아게동',price:'10900'} },
+    r14:{ m1:{name:'코다리막국수',price:'13000'}, m2:{name:'메밀장칼국수',price:'11000'}, m3:{name:'칼만두전골',price:'12000'}, m4:{name:'황태해장국',price:'10000'}, m5:{name:'온막국수',price:'10000'}, m6:{name:'물막국수',price:'10000'}, m7:{name:'비빔막국수',price:'10000'} },
+    r15:{ m1:{name:'삼계탕',price:'15000'} },
+    r16:{ m1:{name:'돌솥추어탕',price:'10000'}, m2:{name:'돌솥밥 통추어탕',price:'12000'}, m3:{name:'추어튀김 대',price:'15000'}, m4:{name:'추어튀김 소',price:'8000'}, m5:{name:'고추장추어탕 대',price:'42000'}, m6:{name:'돌솥밥우렁추어탕',price:'12000'} },
+    r17:{ m1:{name:'얼큰수제비국보리밥',price:'9000'}, m2:{name:'맑은수제비국보리밥',price:'9000'}, m3:{name:'닭곰탕',price:'9000'}, m4:{name:'냉콩국수',price:'9000'}, m5:{name:'보쌈1접시',price:'12000'} },
+    r18:{ m1:{name:'일반초밥',price:'12000'}, m2:{name:'회덮밥',price:'9000'}, m3:{name:'구월정식',price:'18000'}, m4:{name:'알밥',price:'9000'} },
+    r19:{ m1:{name:'회덮밥',price:'8000'}, m2:{name:'나가사끼짬뽕',price:'9000'}, m3:{name:'등심돈카스',price:'9000'}, m4:{name:'매운탕&알밥',price:'10000'} }
+  };
+  await set(ref(db, 'restMenus'), menus);
 }
+initApp();
 
-// 투표 리스트 렌더링 (핵심 로직)
-function renderVoteList() {
-  const el = document.getElementById('voteList');
-  if (!currentSession) { el.innerHTML = ''; return; }
+window.showPage = (id) => {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  const idx = ['vote', 'menu', 'restaurant', 'team'].indexOf(id);
+  btns[idx].classList.add('active');
+};
 
-  // 세션 타입에 따라 아이템 결정
-  let items = {};
-  if (currentSession.type === 'menu' && currentSession.winnerRestId) {
-    items = allRestMenus[currentSession.winnerRestId] || {}; // 1위 식당의 메뉴만 가져옴
-  } else {
-    items = allRestaurants; // 식당 투표 시 전체 식당 리스트
-  }
+window.selectName = (n) => { myName = n; localStorage.setItem('inkiteam_name', n); renderMemberPicker(); renderVoteList(); };
 
-  const entries = Object.entries(items);
-  if (!entries.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3)">등록된 정보가 없습니다.</div>'; return; }
-
-  // 점수 계산
-  const scores = {};
-  Object.values(allVotes).forEach(v => {
-    if (v.rank1) scores[v.rank1] = (scores[v.rank1] || 0) + 3;
-    if (v.rank2) scores[v.rank2] = (scores[v.rank2] || 0) + 2;
-    if (v.rank3) scores[v.rank3] = (scores[v.rank3] || 0) + 1;
-  });
-
-  const sorted = entries.sort((a,b) => (scores[b[0]]||0) - (scores[a[0]]||0));
-  const maxScore = Math.max(...Object.values(scores), 1);
-
-  el.innerHTML = sorted.map(([id, it]) => {
-    const s = scores[id] || 0;
-    const p = (s / maxScore) * 100;
-    return `
-      <div class="vote-item" onclick="window.castVote('${id}')">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-weight:700">${it.name}</div>
-            <div style="font-size:12px;color:var(--acc2)">${it.price ? Number(it.price).toLocaleString() + '원' : it.desc || ''}</div>
-          </div>
-          <div style="font-size:24px">${it.emoji || '🍽️'}</div>
-        </div>
-        <div class="vote-bar-wrap"><div class="vote-bar" style="width:${p}%"></div></div>
-        <div style="font-size:11px;color:var(--text3);margin-top:5px">${s}점 획득</div>
-      </div>
-    `;
-  }).join('');
-}
-
-// 식당 투표 시작
-window.startRestVote = async function() {
+window.startRestVote = () => {
   const title = document.getElementById('sessionTitleInput').value || '오늘 점심';
-  await set(ref(db, 'session'), { title, type: 'restaurant', startedAt: Date.now() });
-  await set(ref(db, 'votes'), null);
+  set(ref(db, 'session'), { title, type: 'restaurant' });
+  set(ref(db, 'votes'), null);
   toast('🏠 식당 투표가 시작되었습니다!');
 };
 
-// 메뉴 투표로 전환 (1위 식당 자동 매칭)
-window.startMenuVoteFromWinner = async function() {
+window.startMenuVoteFromWinner = () => {
   const scores = {};
   Object.values(allVotes).forEach(v => {
     if (v.rank1) scores[v.rank1] = (scores[v.rank1] || 0) + 3;
     if (v.rank2) scores[v.rank2] = (scores[v.rank2] || 0) + 2;
-    if (v.rank3) scores[v.rank3] = (scores[v.rank3] || 0) + 1;
   });
-
-  const winner = Object.entries(scores).sort((a,b) => b[1] - a[1])[0];
-  if (!winner) { toast('먼저 식당 투표를 진행해주세요!'); return; }
-
+  const winner = Object.entries(scores).sort((a,b) => b[1]-a[1])[0];
+  if(!winner) return toast('식당 투표 결과가 없습니다.');
+  
   const winnerId = winner[0];
-  const winnerName = allRestaurants[winnerId].name;
-
-  await set(ref(db, 'session'), {
-    title: `🍱 메뉴 선정: ${winnerName}`,
-    type: 'menu',
-    winnerRestId: winnerId, // 1위 식당 ID 저장
-    startedAt: Date.now()
-  });
-  await set(ref(db, 'votes'), null); // 투표 초기화
-  toast(`${winnerName} 메뉴 투표 시작!`);
+  const winnerName = allRestaurants[winnerId]?.name || "선정된 식당";
+  set(ref(db, 'session'), { title: `🍱 ${winnerName} 메뉴 선정`, type: 'menu', winnerRestId: winnerId });
+  set(ref(db, 'votes'), null);
+  toast(`${winnerName} 메뉴 투표로 전환!`);
 };
 
-window.castVote = async function(id) {
-  if (!myName) { toast('이름을 먼저 선택해주세요!'); return; }
-  const myV = Object.entries(allVotes).find(([k, v]) => v.voter === myName);
-  const key = myV ? myV[0] : push(ref(db, 'votes')).key;
-  const data = myV ? myV[1] : { voter: myName };
-
-  if (data.rank1 === id) delete data.rank1;
-  else if (!data.rank1) data.rank1 = id;
-  else if (data.rank2 === id) delete data.rank2;
-  else if (!data.rank2) data.rank2 = id;
-  else if (data.rank3 === id) delete data.rank3;
-  else if (!data.rank3) data.rank3 = id;
-  else { toast('최대 3개까지 선택 가능합니다!'); return; }
-
-  await set(ref(db, `votes/${key}`), data);
+window.castVote = (id) => {
+  if(!myName) return toast('이름을 먼저 선택하세요!');
+  const myVKey = Object.keys(allVotes).find(k => allVotes[k].voter === myName) || push(ref(db, 'votes')).key;
+  const data = allVotes[myVKey] || { voter: myName };
+  if(data.rank1 === id) delete data.rank1;
+  else if(!data.rank1) data.rank1 = id;
+  else if(data.rank2 === id) delete data.rank2;
+  else if(!data.rank2) data.rank2 = id;
+  set(ref(db, `votes/${myVKey}`), data);
 };
 
 window.endSession = () => set(ref(db, 'session'), null);
 
+function updateSessionUI() {
+  const s = currentSession;
+  document.getElementById('sessionType').textContent = s ? (s.type === 'restaurant' ? 'STEP 1: 식당 투표' : 'STEP 2: 메뉴 투표') : 'READY';
+  document.getElementById('sessionTitle').textContent = s ? s.title : '진행 중인 투표 없음';
+}
+
+function renderVoteList() {
+  const el = document.getElementById('voteList');
+  if(!currentSession) return el.innerHTML = '';
+  let items = currentSession.type === 'menu' ? (allRestMenus[currentSession.winnerRestId] || {}) : allRestaurants;
+  const scores = {};
+  Object.values(allVotes).forEach(v => {
+    if(v.rank1) scores[v.rank1] = (scores[v.rank1] || 0) + 3;
+    if(v.rank2) scores[v.rank2] = (scores[v.rank2] || 0) + 2;
+  });
+  const sorted = Object.entries(items).sort((a,b) => (scores[b[0]]||0) - (scores[a[0]]||0));
+  const max = Math.max(...Object.values(scores), 1);
+  el.innerHTML = sorted.map(([id, it]) => {
+    const s = scores[id] || 0;
+    const isMy1 = Object.values(allVotes).find(v => v.voter === myName)?.rank1 === id;
+    const isMy2 = Object.values(allVotes).find(v => v.voter === myName)?.rank2 === id;
+    return `
+      <div class="vote-item" onclick="castVote('${id}')" style="border-color:${(isMy1||isMy2)?'var(--acc)':'var(--border)'}">
+        <div style="display:flex;justify-content:space-between">
+          <div><b>${it.name}</b> ${isMy1?'🥇':isMy2?'🥈':''}<br>
+          <small style="color:var(--acc2)">${it.price ? Number(it.price).toLocaleString()+'원' : ''}</small></div>
+          <div style="font-size:22px">${it.emoji || '🍽️'}</div>
+        </div>
+        <div class="vote-bar-wrap"><div class="vote-bar" style="width:${(s/max)*100}%"></div></div>
+      </div>`;
+  }).join('');
+}
+
 function renderMemberPicker() {
-  const el = document.getElementById('memberPicker');
-  el.innerHTML = Object.values(allMembers).map(m => `
-    <button onclick="window.selectName('${m.name}')" style="padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:${myName===m.name?'var(--acc)':'var(--bg3)'};color:white">
-      ${m.name}
-    </button>
+  document.getElementById('memberPicker').innerHTML = Object.values(allMembers).map(m => `
+    <div class="member-chip ${myName===m.name?'active':''}" onclick="selectName('${m.name}')">
+      <span style="font-size:16px">${m.emoji}</span> ${m.name}
+    </div>
   `).join('');
 }
 
-window.selectName = (n) => { myName = n; localStorage.setItem('inkiteam_name', n); renderMemberPicker(); };
-function showPage(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById('page-'+id).classList.add('active'); }
-function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
-window.showPage = showPage;
+function toast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
 </script>
 </body>
 </html>
