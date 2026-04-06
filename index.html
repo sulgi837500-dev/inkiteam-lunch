@@ -6,7 +6,7 @@
 <title>인기팀 뭐먹지? 🍽️</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-/* --- 디자인 스타일 --- */
+/* --- 디자인 시스템 --- */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --bg:#0f0f1a;--bg2:#161628;--bg3:#1e1e35;--bg4:#252540;
@@ -19,7 +19,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:50;padding-bottom:env(safe-area-inset-bottom)}
 .nav-btn{flex:1;padding:12px 4px 10px;background:none;border:none;color:var(--text3);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
 .nav-btn.active{color:var(--acc)}
-.page{display:none;padding:0 16px 120px;max-width:480px;margin:0 auto}
+.page{display:none;padding:0 16px 140px;max-width:480px;margin:0 auto}
 .page.active{display:block}
 .page-header{padding:40px 0 20px;text-align:center}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
@@ -36,6 +36,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .member-chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:25px;background:var(--bg3);margin:4px;cursor:pointer;border:1px solid var(--border);transition:0.2s;font-size:13px}
 .member-chip.active{background:var(--acc);border-color:var(--acc);box-shadow:0 4px 12px rgba(255,107,107,0.3)}
+.coffee-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:15px}
+.coffee-btn{padding:12px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:12px;cursor:pointer;text-align:center;line-height:1.2}
+.coffee-btn:active{background:var(--acc4)}
 .list-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border)}
 .menu-group{margin-bottom:20px; border-left: 3px solid var(--acc4); padding-left: 10px;}
 </style>
@@ -44,6 +47,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 
 <nav class="nav">
   <button class="nav-btn active" onclick="showPage('vote')">🗳️<span>투표</span></button>
+  <button class="nav-btn" onclick="showPage('coffee')">☕<span>커피</span></button>
   <button class="nav-btn" onclick="showPage('menu')">🍱<span>메뉴</span></button>
   <button class="nav-btn" onclick="showPage('restaurant')">🏠<span>식당</span></button>
   <button class="nav-btn" onclick="showPage('team')">👥<span>팀원</span></button>
@@ -54,9 +58,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
   <div class="session-card" id="sessionBoard">
     <div id="sessionType" style="font-size:11px;color:var(--acc2);margin-bottom:4px">READY</div>
     <div id="sessionTitle" style="font-size:22px;font-weight:700;margin-bottom:8px">진행 중인 투표 없음</div>
-    <div id="voteSummary" style="font-size:13px;color:var(--text2)">캐릭터를 골라 투표를 시작하세요</div>
+    <div id="voteSummary" style="font-size:13px;color:var(--text2)">캐릭터를 선택하고 투표를 시작하세요</div>
     <div id="orderBoard" style="display:none; margin-top:15px; border-top:1px dashed var(--border); padding-top:10px;">
-        <div style="font-size:12px; color:var(--acc4); margin-bottom:8px; font-weight:bold;">📋 실시간 주문 명단</div>
+        <div style="font-size:12px; color:var(--acc4); margin-bottom:8px; font-weight:bold;">📋 실시간 메뉴 주문 명단</div>
         <div id="orderListContent" style="text-align:left; font-size:13px; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px;"></div>
     </div>
   </div>
@@ -71,7 +75,51 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
       <button class="btn btn-success" onclick="startRestVote()">🏠 식당투표 시작</button>
       <button class="btn btn-blue" onclick="startMenuVoteFromWinner()">🍱 메뉴투표 전환</button>
     </div>
-    <button class="btn btn-full" style="background:var(--bg3);color:var(--text2);margin-top:10px" onclick="endSession()">■ 투표 종료 (최종 확정)</button>
+    <button class="btn btn-full" style="background:var(--bg3);color:var(--text2);margin-top:10px" onclick="endSession()">■ 투표 종료 (결과 확정)</button>
+  </div>
+</div>
+
+<div class="page" id="page-coffee">
+  <div class="page-header"><h1>커피 주문하기 ☕</h1></div>
+  <div class="card" style="background:var(--bg3); border:1px solid var(--acc4);">
+    <div style="font-size:16px; font-weight:700; color:var(--acc4); margin-bottom:12px; text-align:center;">📋 실시간 커피 주문 현황</div>
+    <div id="coffeeTotalCount" style="margin-bottom:15px; padding:10px; background:rgba(77,150,255,0.1); border-radius:10px; font-size:13px; color:var(--acc2); line-height:1.6;">주문 대기 중...</div>
+    <div id="coffeeOrderList" style="text-align:left; font-size:14px; background:rgba(0,0,0,0.2); padding:12px; border-radius:10px;">주문 내역이 없습니다.</div>
+    <button class="btn btn-full" style="background:transparent; color:var(--text3); margin-top:10px; font-size:11px; border:1px solid var(--border);" onclick="resetCoffee()">주문 내역 초기화</button>
+  </div>
+  <div class="card">
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px; font-weight:bold; margin-bottom:10px; color:var(--acc4);">[ 일반 커피 ]</div>
+      <div class="coffee-grid">
+        <button class="coffee-btn" onclick="orderCoffee('아이스 아메리카노')">❄️ 아이스 아메</button>
+        <button class="coffee-btn" onclick="orderCoffee('핫 아메리카노')">🔥 핫 아메</button>
+        <button class="coffee-btn" onclick="orderCoffee('아이스 카페라떼')">❄️ 아이스 라떼</button>
+        <button class="coffee-btn" onclick="orderCoffee('핫 카페라떼')">🔥 핫 라떼</button>
+        <button class="coffee-btn" onclick="orderCoffee('아이스 바닐라라떼')">❄️ 아이스 바닐라</button>
+        <button class="coffee-btn" onclick="orderCoffee('핫 바닐라라떼')">🔥 핫 바닐라</button>
+        <button class="coffee-btn" onclick="orderCoffee('아이스 카페모카')">❄️ 아이스 모카</button>
+        <button class="coffee-btn" onclick="orderCoffee('핫 카페모카')">🔥 핫 모카</button>
+        <button class="coffee-btn" onclick="orderCoffee('아이스 시그니처')">❄️ 아이스 시그니처</button>
+        <button class="coffee-btn" onclick="orderCoffee('핫 시그니처')">🔥 핫 시그니처</button>
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px; font-weight:bold; margin-bottom:10px; color:var(--acc3);">[ 디카페인 ]</div>
+      <div class="coffee-grid">
+        <button class="coffee-btn" onclick="orderCoffee('아이스 디카페인 아메')">❄️ 디카 아메(I)</button>
+        <button class="coffee-btn" onclick="orderCoffee('핫 디카페인 아메')">🔥 디카 아메(H)</button>
+        <button class="coffee-btn" onclick="orderCoffee('아이스 디카페인 라떼')">❄️ 디카 라떼(I)</button>
+        <button class="coffee-btn" onclick="orderCoffee('핫 디카페인 라떼')">🔥 디카 라떼(H)</button>
+        <button class="coffee-btn" onclick="orderCoffee('아이스 디카페인 바닐라')">❄️ 디카 바닐라(I)</button>
+        <button class="coffee-btn" onclick="orderCoffee('핫 디카페인 바닐라')">🔥 디카 바닐라(H)</button>
+        <button class="coffee-btn" onclick="orderCoffee('아이스 디카페인 모카')">❄️ 디카 모카(I)</button>
+        <button class="coffee-btn" onclick="orderCoffee('핫 디카페인 모카')">🔥 디카 모카(H)</button>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border); padding-top:15px;">
+      <input class="inp" id="customCoffeeInput" placeholder="에이드, 티 등 직접 입력">
+      <button class="btn btn-blue btn-full" onclick="orderCustomCoffee()">그 외 메뉴 주문하기</button>
+    </div>
   </div>
 </div>
 
@@ -103,13 +151,17 @@ let allMembers = {};
 let allRestaurants = {};
 let allRestMenus = {};
 let allVotes = {};
+let coffeeOrders = {};
 
+// --- 데이터 실시간 동기화 ---
 onValue(ref(db, 'members'), s => { allMembers = s.val() || {}; renderMemberPicker(); renderTeamList(); });
 onValue(ref(db, 'restaurants'), s => { allRestaurants = s.val() || {}; renderRestList(); });
 onValue(ref(db, 'restMenus'), s => { allRestMenus = s.val() || {}; renderFullMenuList(); renderVoteList(); });
 onValue(ref(db, 'session'), s => { currentSession = s.val(); updateSessionUI(); renderVoteList(); });
 onValue(ref(db, 'votes'), s => { allVotes = s.val() || {}; updateSessionUI(); renderVoteList(); });
+onValue(ref(db, 'coffeeOrders'), s => { coffeeOrders = s.val() || {}; renderCoffeeOrders(); });
 
+// --- 초기 데이터 주입 ---
 async function initApp() {
   const members = { 
     m1:{name:'남', emoji:'👩‍💼'}, m2:{name:'정', emoji:'👦'}, m3:{name:'고', emoji:'👩‍🦱'}, 
@@ -159,47 +211,17 @@ window.showPage = (id) => {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  const idx = ['vote', 'menu', 'restaurant', 'team'].indexOf(id);
+  const idx = ['vote', 'coffee', 'menu', 'restaurant', 'team'].indexOf(id);
   document.querySelectorAll('.nav-btn')[idx].classList.add('active');
 };
 
-function renderRestList() {
-  const el = document.getElementById('fullRestList');
-  el.innerHTML = Object.entries(allRestaurants).map(([id, r]) => `
-    <div class="card list-item">
-      <span>${r.emoji} <b>${r.name}</b></span>
-      <span style="font-size:11px;color:var(--text3)">${Object.keys(allRestMenus[id]||{}).length}개 메뉴</span>
-    </div>
-  `).join('');
-}
-
-function renderFullMenuList() {
-  const el = document.getElementById('fullMenuList');
-  el.innerHTML = Object.entries(allRestaurants).map(([rid, r]) => {
-    const menus = allRestMenus[rid] || {};
-    return `<div class="menu-group">
-      <div style="font-weight:700; color:var(--acc2); margin-bottom:8px;">${r.emoji} ${r.name}</div>
-      ${Object.values(menus).map(m => `<div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px; color:var(--text2)">
-        <span>${m.name}</span><span>${Number(m.price).toLocaleString()}원</span>
-      </div>`).join('')}
-    </div>`;
-  }).join('');
-}
-
-function renderTeamList() {
-  const el = document.getElementById('fullMemberList');
-  el.innerHTML = Object.values(allMembers).map(m => `<div class="card list-item">
-    <span>${m.emoji} <b>${m.name}</b></span><span style="color:var(--acc3)">인기팀 멤버</span>
-  </div>`).join('');
-}
-
 // --- 투표 로직 ---
-window.selectName = (n) => { myName = n; localStorage.setItem('inkiteam_name', n); renderMemberPicker(); renderVoteList(); };
+window.selectName = (n) => { myName = n; localStorage.setItem('inkiteam_name', n); renderMemberPicker(); };
 window.startRestVote = () => { set(ref(db, 'session'), { title: document.getElementById('sessionTitleInput').value || '오늘 점심', type: 'restaurant', status: 'active' }); set(ref(db, 'votes'), null); };
 window.startMenuVoteFromWinner = () => {
   const scores = calculateScores();
   const winner = Object.entries(scores).sort((a,b) => b[1]-a[1])[0];
-  if(!winner) return toast('식당을 투표하세요!');
+  if(!winner) return toast('식당을 먼저 투표하세요!');
   set(ref(db, 'session'), { title: `🍱 ${allRestaurants[winner[0]].name}`, type: 'menu', winnerRestId: winner[0], status: 'active' });
   set(ref(db, 'votes'), null);
 };
@@ -218,6 +240,12 @@ function calculateScores() {
   return scores;
 }
 
+// --- 커피 주문 로직 ---
+window.orderCoffee = (menuName) => { if(!myName) return toast('캐릭터를 고르세요!'); set(ref(db, `coffeeOrders/${myName}`), { menu: menuName }); };
+window.orderCustomCoffee = () => { const input = document.getElementById('customCoffeeInput'); if(!input.value) return; orderCoffee(input.value); input.value = ''; };
+window.resetCoffee = () => { if(confirm('주문을 초기화할까요?')) set(ref(db, 'coffeeOrders'), null); };
+
+// --- 렌더링 함수 ---
 function updateSessionUI() {
   const s = currentSession;
   const elTitle = document.getElementById('sessionTitle');
@@ -232,17 +260,13 @@ function updateSessionUI() {
 
   if(s.type === 'menu') {
     elOrderBoard.style.display = 'block';
-    const voteEntries = Object.values(allVotes);
-    elOrderContent.innerHTML = voteEntries.length > 0 ? voteEntries.map(v => {
+    const vEntries = Object.values(allVotes);
+    elOrderContent.innerHTML = vEntries.length > 0 ? vEntries.map(v => {
       const m = Object.values(allMembers).find(mem => mem.name === v.voter);
-      const menuObj = allRestMenus[s.winnerRestId][v.rank1] || {name:'선택 중...', price:'0'};
-      return `<div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                <span>${m?.emoji}${v.voter}</span> 
-                <span>${menuObj.name} <small style="color:var(--text3)">(${Number(menuObj.price).toLocaleString()}원)</small></span>
-              </div>`;
-    }).join('') : '주문 내역 없음';
-    elSummary.innerHTML = `현재 <b>${voteEntries.length}명</b> 참여 중`;
-  } else { elOrderBoard.style.display = 'none'; elSummary.innerHTML = '가고 싶은 식당을 선택하세요.'; }
+      const mObj = allRestMenus[s.winnerRestId][v.rank1] || {name:'선택 중...', price:'0'};
+      return `<div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>${m?.emoji}${v.voter}</span> <span>${mObj.name} (${Number(mObj.price).toLocaleString()}원)</span></div>`;
+    }).join('') : '내역 없음';
+  } else { elOrderBoard.style.display = 'none'; }
 }
 
 function renderVoteList() {
@@ -256,29 +280,34 @@ function renderVoteList() {
     const s = scores[id] || 0;
     const ch = Object.values(allVotes).filter(v => v.rank1 === id || v.rank2 === id).map(v => Object.values(allMembers).find(m => m.name === v.voter)?.emoji || '').join('');
     const isMy = Object.values(allVotes).find(v => v.voter === myName && (v.rank1 === id || v.rank2 === id));
-    const priceText = (currentSession.type === 'menu' && it.price) ? `<span style="font-size:12px; color:var(--text3); margin-left:5px;">(${Number(it.price).toLocaleString()}원)</span>` : '';
-    return `
-      <div class="vote-item" onclick="castVote('${id}')" style="border-color:${isMy?'var(--acc)':'var(--border)'}">
-        <div style="display:flex;justify-content:space-between; align-items:center;">
-          <div><b>${it.name}</b>${priceText}<span style="font-size:12px;color:var(--acc2); margin-left:10px;">${s}점</span>
-            <div style="margin-top:4px">${ch}</div></div><div style="font-size:20px">${it.emoji || '🍽️'}</div>
-        </div>
-        <div class="vote-bar-wrap"><div class="vote-bar" style="width:${(s/max)*100}%"></div></div>
-      </div>`;
+    const pTxt = (currentSession.type === 'menu' && it.price) ? `<small style="color:var(--text3)">(${Number(it.price).toLocaleString()}원)</small>` : '';
+    return `<div class="vote-item" onclick="castVote('${id}')" style="border-color:${isMy?'var(--acc)':'var(--border)'}">
+      <div style="display:flex;justify-content:space-between"><div><b>${it.name}</b> ${pTxt} <span style="font-size:12px;color:var(--acc2);margin-left:8px;">${s}점</span><div style="margin-top:4px">${ch}</div></div><div style="font-size:20px">${it.emoji || '🍽️'}</div></div>
+      <div class="vote-bar-wrap"><div class="vote-bar" style="width:${(s/max)*100}%"></div></div>
+    </div>`;
   }).join('');
 }
 
-function renderMemberPicker() {
-  document.getElementById('memberPicker').innerHTML = Object.values(allMembers).map(m => `
-    <div class="member-chip ${myName===m.name?'active':''}" onclick="selectName('${m.name}')"><span>${m.emoji}</span> ${m.name}</div>
-  `).join('');
+function renderCoffeeOrders() {
+  const elList = document.getElementById('coffeeOrderList');
+  const elTotal = document.getElementById('coffeeTotalCount');
+  const vEntries = Object.entries(coffeeOrders);
+  if(vEntries.length === 0) { elList.innerHTML = '내역 없음'; elTotal.innerHTML = '대기 중...'; return; }
+  
+  elList.innerHTML = vEntries.map(([name, data]) => {
+    const m = Object.values(allMembers).find(mem => mem.name === name);
+    return `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.05);"><span>${m?.emoji || ''} <b>${name}</b></span><span style="color:var(--acc4)">${data.menu}</span></div>`;
+  }).join('');
+  
+  const sum = {}; vEntries.forEach(([n, d]) => sum[d.menu] = (sum[d.menu] || 0) + 1);
+  elTotal.innerHTML = Object.entries(sum).map(([m, c]) => `• ${m}: <b>${c}잔</b>`).join('<br>');
 }
 
-function toast(m) {
-  const t = document.getElementById('toast');
-  t.textContent = m; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
-}
+function renderMemberPicker() { document.getElementById('memberPicker').innerHTML = Object.values(allMembers).map(m => `<div class="member-chip ${myName===m.name?'active':''}" onclick="selectName('${m.name}')"><span>${m.emoji}</span> ${m.name}</div>`).join(''); }
+function renderRestList() { document.getElementById('fullRestList').innerHTML = Object.entries(allRestaurants).map(([id, r]) => `<div class="card list-item"><span>${r.emoji} <b>${r.name}</b></span></div>`).join(''); }
+function renderFullMenuList() { document.getElementById('fullMenuList').innerHTML = Object.entries(allRestaurants).map(([rid, r]) => `<div class="menu-group"><div style="font-weight:700; color:var(--acc2);">${r.emoji} ${r.name}</div>${Object.values(allRestMenus[rid]||{}).map(m => `<div style="display:flex; justify-content:space-between; font-size:13px;"><span>${m.name}</span><span>${Number(m.price).toLocaleString()}원</span></div>`).join('')}</div>`).join(''); }
+function renderTeamList() { document.getElementById('fullMemberList').innerHTML = Object.values(allMembers).map(m => `<div class="card list-item"><span>${m.emoji} <b>${m.name}</b></span></div>`).join(''); }
+function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
 </script>
 </body>
 </html>
